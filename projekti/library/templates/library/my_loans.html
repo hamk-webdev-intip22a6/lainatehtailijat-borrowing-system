@@ -1,0 +1,31 @@
+{% extends 'base.html' %}
+
+{% block title %}
+  My Loans
+{% endblock %}
+
+{% block content %}
+  <h1>My Loans</h1>
+  <br>
+  {% if user.is_authenticated %}
+    {% if user_loans %}
+      <ul style="list-style-type: none; padding: 0;">
+        {% for loan in user_loans %}
+          <li style="margin-bottom: 30px; border-top: 1px solid #ccc; padding-bottom: 10px; padding-top: 20px;">
+            {{ loan.book.title }} <br>
+            <span style="font-size: 80%;">By {{ loan.book.authors.all|join:", " }}</span><br>
+            <span style="font-size: 80%;">Due: {{ loan.due_back }}</span>
+            <form method="post" action="{% url 'library:return_book' loan.id %}">
+              {% csrf_token %}
+              <button style="margin-top: 20px;" type="submit">Return this book</button>
+            </form>
+          </li>
+        {% endfor %}
+      </ul>
+    {% else %}
+      <p>No books currently on loan.</p>
+    {% endif %}
+  {% else %}
+    <p>You must be logged in to view your loans.</p>
+  {% endif %}
+{% endblock %}

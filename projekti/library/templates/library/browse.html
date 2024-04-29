@@ -1,0 +1,40 @@
+{% extends 'base.html' %}
+
+{% block title %}Browse Books{% endblock %}
+
+{% block content %}
+  <div class="container">
+    <h1>All Books</h1>
+    <form method="GET" action="{% url 'library:search' %}">
+      <input type="text" name="query" placeholder="Search by title, author, ..." style="width: 400px;">
+      <button type="submit">Search</button>
+    </form>
+    <br>
+    <div class="row">
+      {% for book in all_books %}
+        <div class="col-md-4">
+          <div class="card mb-4 shadow-sm">
+            <img src="{{ book.cover.url }}" class="card-img-top" alt="{{ book.title }}" style="max-width: 100%; height: auto;">
+            <div class="card-body">
+              <h5 class="card-title">{{ book.title }}</h5>
+              <p class="card-text">By {{ book.authors.all|join:", " }}</p>
+              {% if book.is_available %}
+                <p class="text-success">Available</p>
+                {% if user.is_authenticated %}
+                  <form method="post" action="{% url 'library:loan_book' book.id %}">
+                    {% csrf_token %}
+                    <button type="submit" class="btn btn-primary">Borrow</button>
+                  </form>
+                {% else %}
+                  <p>Please <a href="{% url 'login' %}">login</a> to borrow this book.</p>
+                {% endif %}
+              {% else %}
+                <p class="text-danger">Reserved</p>
+              {% endif %}
+            </div>
+          </div>
+        </div>
+      {% endfor %}
+    </div>
+  </div>
+{% endblock %}

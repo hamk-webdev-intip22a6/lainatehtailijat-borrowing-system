@@ -1,0 +1,22 @@
+{% extends 'base.html' %}
+
+{% block content %}
+    {% if user.is_authenticated %}
+        <h1>Welcome {{ user }}!</h1>
+        <br>
+        <h3>What would you like to do?</h3>
+        <ul>
+            <li><a href="{% url 'library:browse' %}">Browse Books</a></li>
+            <li><a href="{% url 'my_loans' %}">My Loans</a></li>
+        </ul>
+        <br>
+        <form method="post" action="{% url 'logout' %}">
+            {% csrf_token %}
+            <button type="submit">Log out</button>
+        </form>
+        <br>
+    {% else %}
+        <h1>Welcome!</h1>
+        <p><a href="{% url 'login' %}">Sign in</a> or <a href="{% url 'signup' %}">create an account</a> to continue.</p>
+    {% endif %}
+{% endblock %}
